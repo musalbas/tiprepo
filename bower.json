@@ -1,0 +1,12 @@
+{
+    "name": "codekudos",
+    "version": "0",
+    "dependencies": {
+        "bootstrap": "3.1.1",
+        "jquery": "latest"
+    },
+    "private": true,
+    "install": {
+        "path": "static"
+    }
+}

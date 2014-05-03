@@ -1,0 +1,5 @@
+# Database details
+mysql_host = 'localhost'
+mysql_db = 'tiprepo'
+mysql_user = 'tiprepo'
+mysql_pass = ''

@@ -1,9 +1,11 @@
 import web
 
-import tiprepo.models.index
+from tiprepo.models.index import Index
+
+#web.config.debug = False
 
 urls = (
-    '/', 'tiprepo.models.index.Index',
+    '/', 'Index',
 )
 
 app = web.application(urls, globals())

@@ -1,9 +1,9 @@
 import web
 
-import codekudos.models.index
+import tiprepo.models.index
 
 urls = (
-    '/', 'codekudos.models.index.page',
+    '/', 'tiprepo.models.index.Index',
 )
 
 app = web.application(urls, globals())

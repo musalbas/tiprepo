@@ -17,22 +17,22 @@ db.query("""
 CREATE TABLE repos (
 
     /* Internal stuff */
-    id INT NOT NULL AUTO_INCREMENT,
-    PRIMARY KEY (id),
     last_synced INT NOT NULL,
 
     /* Repo-specific */
-    owner VARCHAR(100) NOT NULL,
+    gh_id INT NOT NULL,
+    PRIMARY KEY (gh_id),
+    owner_login VARCHAR(100) NOT NULL,
     name VARCHAR(100) NOT NULL,
     forks_count INT NOT NULL,
     stargazers_count INT NOT NULL,
-    created_at DATETIME NOT NULL,
-    updated_at DATETIME NOT NULL,
+    created_at INT NOT NULL,
+    updated_at INT NOT NULL,
     homepage VARCHAR(100),
-    organization VARCHAR(100),
+    organization_login VARCHAR(100),
     organization_avatar_url VARCHAR(100),
-    parent VARCHAR(100),
-    parent_owner VARCHAR(100),
+    parent_name VARCHAR(100),
+    parent_owner_login VARCHAR(100),
     contributors_count INT NOT NULL,
 
     /* TipRepo-specific */
@@ -41,6 +41,20 @@ CREATE TABLE repos (
     pulls_paid INT NOT NULL DEFAULT 0,
     people_paid INT NOT NULL DEFAULT 0
 
+);
+
+""")
+
+db.query("""
+
+CREATE TABLE repo_contributors (
+    id INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id),
+    repo_gh_id INT NOT NULL,
+    contributor_login VARCHAR(100) NOT NULL,
+    contributor_gh_id INT NOT NULL,
+    commits INT NOT NULL,
+    last_synced INT NOT NULL
 );
 
 """)

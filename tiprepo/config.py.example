@@ -1,5 +1,7 @@
-# Database details
-mysql_host = 'localhost'
-mysql_db = 'tiprepo'
-mysql_user = 'tiprepo'
-mysql_pass = ''
+MYSQL_HOST = 'localhost'
+MYSQL_DB = 'tiprepo'
+MYSQL_USER = 'tiprepo'
+MYSQL_PASS = ''
+
+REPO_SYNC_EXPIRE = 60 * 10
+CONTRIBUTORS_SYNC_EXPIRE = 60 * 10

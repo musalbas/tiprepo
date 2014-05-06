@@ -34,6 +34,7 @@ CREATE TABLE repos (
     parent_name VARCHAR(100),
     parent_owner_login VARCHAR(100),
     contributors_count INT NOT NULL,
+    UNIQUE KEY (owner_login, name),
 
     /* TipRepo-specific */
     total_tipped NUMERIC(20, 8) NOT NULL DEFAULT 0,
@@ -54,7 +55,8 @@ CREATE TABLE repo_contributors (
     contributor_login VARCHAR(100) NOT NULL,
     contributor_gh_id INT NOT NULL,
     commits INT NOT NULL,
-    last_synced INT NOT NULL
+    last_synced INT NOT NULL,
+    UNIQUE KEY (repo_gh_id, contributor_gh_id)
 );
 
 """)

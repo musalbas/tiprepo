@@ -10,7 +10,20 @@ class InvalidRepoError(Exception):
 
 def get_repo(db, owner_login, name, sync=True,
              sync_expire=REPO_SYNC_EXPIRE):
-    pass
+    db_vars = dict(owner_login = owner_login, name = name)
+    results = db.select('repos', vars=db_vars,
+                       where='owner_login = $owner_login AND name = $name')
+
+    if len(results) > 0:
+        repo = results[0]
+        if (not sync
+            or not time.time() - repo.last_synced > sync_expire):
+            return repo
+    elif not sync:
+        raise InvalidRepoError("The repo '" + owner_login + "/" + name
+                               + "' has not been synced.")
+
+    return sync_repo(db, owner_login, name)
 
 def get_repo_contributors(db, owner_login, name, sync=True,
                           sync_expire=REPO_CONTRIBUTORS_SYNC_EXPIRE):
@@ -21,9 +34,9 @@ def sync_repo(db, owner_login, name):
         api_data = github('/repos/' + owner_login + '/' + name)
         # We have to get the contributors count from the HTML page as the
         # GitHub API doesn't provide it.
-        # TODO fix "Fetching contributors" case.
         html_data = urllib2.urlopen('https://github.com/' + owner_login
-                                    + '/' + name).read()
+                                    + '/' + name
+                                    + '/contributors_size').read()
     except urllib2.HTTPError as e:
         raise InvalidRepoError(str(e))
 
@@ -56,21 +69,22 @@ def sync_repo(db, owner_login, name):
     else:
         parent_name = parent_owner_login = None
 
-    updated = db.update('repos', where='gh_id = ' + str(gh_id),
-              owner_login=owner_login,
-              name=name,
-              forks_count=forks_count,
-              stargazers_count=stargazers_count,
-              created_at=created_at,
-              updated_at=updated_at,
-              homepage=homepage,
-              organization_login=organization_login,
-              organization_avatar_url=organization_avatar_url,
-              parent_name=parent_name,
-              parent_owner_login=parent_owner_login,
-              contributors_count=contributors_count,
-              last_synced=last_synced
-              )
+    db_vars = dict(gh_id = gh_id)
+    updated = db.update('repos', vars=db_vars, where='gh_id = $gh_id',
+                        owner_login=owner_login,
+                        name=name,
+                        forks_count=forks_count,
+                        stargazers_count=stargazers_count,
+                        created_at=created_at,
+                        updated_at=updated_at,
+                        homepage=homepage,
+                        organization_login=organization_login,
+                        organization_avatar_url=organization_avatar_url,
+                        parent_name=parent_name,
+                        parent_owner_login=parent_owner_login,
+                        contributors_count=contributors_count,
+                        last_synced=last_synced
+                        )
 
     # TODO use db.select to check if the repo already exists in the db
     # before inserting it, in case db.update returns 0 if nothing gets
@@ -93,6 +107,8 @@ def sync_repo(db, owner_login, name):
                   contributors_count=contributors_count,
                   last_synced=last_synced
                   )
+
+    return get_repo(db, owner_login, name, sync=False)
 
 def sync_repo_contributors(db, owner_login, name):
     pass
